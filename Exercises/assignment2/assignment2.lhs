@@ -11,8 +11,10 @@ data FunExp  =  Const REAL
              |  Cos FunExp
 
 \begin{code}
-{-# LANGUAGE FlexibleInstances #-}
-import Prelude hiding ((+), (*))
+{-# LANGUAGE  FlexibleContexts, FlexibleInstances #-}
+{-# LANGUAGE  TypeSynonymInstances #-}
+import Prelude hiding (  (+), (-), (*), (/), negate, recip, (^),
+                         pi, sin, cos, exp, fromInteger, fromRational)
 import qualified Prelude 
 import DSLsofMath.FunExp hiding (derive)
 import DSLsofMath.Derive 
@@ -77,7 +79,41 @@ PART 2
 
 \begin{code}
 
+type Tri a     = (a, a, a)
+type TriFun a  = Tri (a->a)   -- = |(a->a, a->a, a->a)|
+type FunTri a  = a -> Tri a   -- = |a -> (a, a, a)|
 
+instance Additive a => Additive (Tri a) where
+  (+)  = addTri;   zero  = zeroTri
+instance (Additive a, Multiplicative a) => Multiplicative (Tri a) where
+  (*)  = mulTri;   one   = oneTri
+
+instance AddGroup a => AddGroup (Tri a) where
+  negate  = negateTri
+instance (AddGroup a, MulGroup a) => MulGroup (Tri a) where
+  recip   = recipTri
+
+addTri (x, y, z) (x1, y1, z1) = (x + x1, y + y1, z + z1)
+zeroTri :: Additive a => Tri a
+zeroTri = (zero, zero, zero)
+mulTri (x, y, z) (x1, y1, z1) = (x*x1, y*y1, z*z1)
+oneTri :: Multiplicative a => Tri a
+oneTri = (one, one, one)
+negateTri :: AddGroup a => Tri a -> Tri a
+negateTri (x, y, z) = (negate x, negate y, negate z)
+recipTri :: (AddGroup a, MulGroup a) => Tri a -> Tri a
+recipTri (x,y,z)  = (recip x, recip y, recip z)
+
+instance Transcendental a  => Transcendental (Tri a)  where
+  pi = piTri;   sin = sinTri;   cos = cosTri;   exp = expTri
+
+(piTri, sinTri, cosTri, expTri) = undefined
+
+piTri :: Transcendental a => Tri a
+piTri  = (pi, pi, pi)
+sinTri = undefined
+cosTri = undefined
+expTri = undefined
 
 
 \end{code}
