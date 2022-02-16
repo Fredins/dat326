@@ -1,0 +1,3 @@
+[submodule "DSLsofMath"]
+	path = DSLsofMath
+	url = https://github.com/DSLsofMath/DSLsofMath
