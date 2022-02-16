@@ -1,0 +1,17 @@
+
+H2 (h, op1, op2) = forall x. forall y. h (op1 x y) == op2 (h x) (h y)
+
+1. 
+evalE : ComplexE -> ComplexD
+Plus -> plusD
+
+\begin{code}
+import DSLsofMath.FunExp
+
+
+h2 (h, op1, op2) x y= h (op1 x y) == op2 (h x) (h y)
+
+test = h2 (eval, :*:, *)
+
+
+\end{code}
