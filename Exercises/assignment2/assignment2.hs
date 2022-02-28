@@ -277,9 +277,13 @@ newtonTList tupf e y = n y []
 
    where
     fx, f'x :: R
-    (fx, f'x, _) = tupf $ three0 x
+   -- (fx, f'x, _) = tupf (x, x, x)
+    (fx, f'x, _) = tupf (x, one, zero)
+-- (x^3, 3x^2 * x')
+
     x1           = x - (fx / f'x)
     acc'         = x : acc
+
 
 
 -- part 3
@@ -296,6 +300,8 @@ apply (x, y, z) (f, g, h) = (f x, g y, h z)
 
 
 
+
+
 optim :: (T R -> T R) -> R -> R -> String
 optim tupf e x | abs f''x0 < 0.1   = "Dunno x = " ++ y
                | signum f''x0 == 1 = "Minimum at x = " ++ y
@@ -304,10 +310,8 @@ optim tupf e x | abs f''x0 < 0.1   = "Dunno x = " ++ y
  where
   x0 = newtonT tupf' e x
   tupf' :: T R -> T R
-  tupf' = flip apply (g2 . tupf . var, g3 . tupf . var, const 0)
-  var :: R -> T R
-  var   = (, 1, 0)
-  f''x0 = (g3 . tupf . var) x0
+  tupf' a = (g2 $ tupf a, g3 $ tupf a, zero)
+  f''x0 = (g3 . tupf) (x0, one, zero)
   y     = printf "%0.2f" x0
 
 
